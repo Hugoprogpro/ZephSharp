@@ -39,7 +39,7 @@ namespace Zephyros
         {
             if (m.Msg == WM_HOTKEY)
             {
-                
+                m.Msg
                 button1_Click(null, null);
                 //HotKeyEventArgs e = new HotKeyEventArgs(m.LParam);
                 //HotKeyManager.OnHotKeyPressed(e);
