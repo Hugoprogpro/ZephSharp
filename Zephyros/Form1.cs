@@ -10,7 +10,6 @@ using System.Windows.Forms;
 using System.Runtime.InteropServices;
 
 
-
 namespace Zephyros
 {
     public partial class Form1 : Form
@@ -39,7 +38,7 @@ namespace Zephyros
         {
             if (m.Msg == WM_HOTKEY)
             {
-                m.Msg
+                //m.Msg
                 button1_Click(null, null);
                 //HotKeyEventArgs e = new HotKeyEventArgs(m.LParam);
                 //HotKeyManager.OnHotKeyPressed(e);
@@ -53,6 +52,9 @@ namespace Zephyros
         private void Form1_Load(object sender, EventArgs e)
         {
             Api.HotKey.DoIt(this.Handle);
+
+            clojure.lang.Var v = clojure.lang.RT.var("clojure.core", "load-file");
+            v.invoke(@"C:\Users\sdegutis\Desktop\Test.clj");
         }
     }
 }
@@ -62,6 +64,10 @@ namespace Api
 {
     public class HotKey
     {
+        public static void Greet() {
+            MessageBox.Show("Hello!");
+        }
+
         [DllImport("user32", SetLastError = true)]
         private static extern bool RegisterHotKey(IntPtr hWnd, int id, uint fsModifiers, uint vk);
 
