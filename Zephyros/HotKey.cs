@@ -1,10 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections;
 using System.Linq;
+using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using System.Linq;
 
 namespace Zephyros
 {
@@ -16,15 +18,19 @@ namespace Zephyros
         [DllImport("user32", SetLastError = true)]
         private static extern bool UnregisterHotKey(IntPtr hWnd, int id);
 
-        private KeyModifiers translateMods(IEnumerable<string> mods)
+        private KeyModifiers translateMods(IEnumerable mods)
         {
             KeyModifiers keyMods = 0;
-            mods = mods.Select(mod => mod.ToUpper()).ToList();
-            if (mods.Contains("ALT")) keyMods |= KeyModifiers.Alt;
-            if (mods.Contains("CTRL")) keyMods |= KeyModifiers.Control;
-            if (mods.Contains("SHIFT")) keyMods |= KeyModifiers.Shift;
-            if (mods.Contains("WINDOWS")) keyMods |= KeyModifiers.Windows;
-            if (mods.Contains("NOREPEAT")) keyMods |= KeyModifiers.NoRepeat;
+            foreach (clojure.lang.Keyword mod in mods)
+            {
+                var str = mod.Name;
+                Console.WriteLine(mod.ToString());
+                if (str.ToUpper() == "ALT") keyMods |= KeyModifiers.Alt;
+                if (str.ToUpper() == "CTRL") keyMods |= KeyModifiers.Control;
+                if (str.ToUpper() == "SHIFT") keyMods |= KeyModifiers.Shift;
+                if (str.ToUpper() == "WIN") keyMods |= KeyModifiers.Windows;
+                if (str.ToUpper() == "NOREPEAT") keyMods |= KeyModifiers.NoRepeat;
+            }
             return keyMods;
         }
 
@@ -47,14 +53,20 @@ namespace Zephyros
             return false;
         }
 
-        public HotKey(string key, IEnumerable<string> mods)
+        public HotKey(string key, IEnumerable mods)
         {
             uint rawMods = (uint)translateMods(mods);
-            uint rawKey = key.ToUpper().First();
+            uint rawKey = key.ToUpper().ToCharArray()[0];
             IntPtr hwnd = CallbackWindow.SharedCallbackWindow.Handle;
+
+            Console.WriteLine("[{0}, {1}]", rawMods.ToString(), rawKey.ToString());
+
+            //rawMods = (uint)(KeyModifiers.Alt | KeyModifiers.Control);
+            //rawKey = 0x44;
 
             hotkeyID = ++nextHotkeyID;
             RegisterHotKey(hwnd, hotkeyID, rawMods, rawKey);
+            Console.WriteLine("here rgh now");
             CallbackWindow.SharedCallbackWindow.HotKeyTable.Add(hotkeyID, this);
         }
 
@@ -75,6 +87,7 @@ namespace Zephyros
                 if (m.Msg == WM_HOTKEY)
                 {
                     HotKey hotkey = HotKeyTable[m.WParam.ToInt32()];
+                    Console.WriteLine(hotkey.ToString());
                     bool handled = hotkey.OnHotKeyPressed();
                 }
 
