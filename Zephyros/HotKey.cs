@@ -11,12 +11,6 @@ namespace Zephyros
 {
     public class HotKey
     {
-        [DllImport("user32", SetLastError = true)]
-        private static extern bool RegisterHotKey(IntPtr hWnd, int id, uint fsModifiers, uint vk);
-
-        [DllImport("user32", SetLastError = true)]
-        private static extern bool UnregisterHotKey(IntPtr hWnd, int id);
-
         static private uint translateMods(IEnumerable mods)
         {
             Modifiers keyMods = 0;
@@ -55,30 +49,33 @@ namespace Zephyros
 
         public HotKey(string key, IEnumerable mods, clojure.lang.IFn callback)
         {
-            CallbackWindow w = CallbackWindow.SharedCallbackWindow;
-            _id = ++ w.nextHotkeyID;
+            _id = ++ CallbackWindow.Instance.nextHotkeyID;
             _callback = callback;
             _mods = translateMods(mods);
             _key = key.ToUpper().ToCharArray()[0];
         }
 
+        [DllImport("user32", SetLastError = true)]
+        private static extern bool RegisterHotKey(IntPtr hWnd, int id, uint fsModifiers, uint vk);
+
         public void Enable()
         {
-            CallbackWindow w = CallbackWindow.SharedCallbackWindow;
-            RegisterHotKey(w.Handle, _id, _mods, _key);
-            w.HotKeyTable.Add(_id, this);
+            RegisterHotKey(CallbackWindow.Instance.Handle, _id, _mods, _key);
+            CallbackWindow.Instance.HotKeyTable.Add(_id, this);
         }
+
+        [DllImport("user32", SetLastError = true)]
+        private static extern bool UnregisterHotKey(IntPtr hWnd, int id);
 
         public void Disable()
         {
-            CallbackWindow w = CallbackWindow.SharedCallbackWindow;
-            UnregisterHotKey(w.Handle, _id);
-            w.HotKeyTable.Remove(_id);
+            UnregisterHotKey(CallbackWindow.Instance.Handle, _id);
+            CallbackWindow.Instance.HotKeyTable.Remove(_id);
         }
 
         private class CallbackWindow : Form
         {
-            static public readonly CallbackWindow SharedCallbackWindow = new CallbackWindow();
+            static public readonly CallbackWindow Instance = new CallbackWindow();
             public int nextHotkeyID = 0;
             public readonly Dictionary<int, HotKey> HotKeyTable = new Dictionary<int, HotKey>();
 
