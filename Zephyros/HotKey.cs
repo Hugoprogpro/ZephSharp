@@ -79,11 +79,6 @@ namespace Zephyros
             public int nextHotkeyID = 0;
             public readonly Dictionary<int, HotKey> HotKeyTable = new Dictionary<int, HotKey>();
 
-            //protected override void SetVisibleCore(bool value)
-            //{
-            //    base.SetVisibleCore(false);
-            //}
-
             protected override void WndProc(ref Message m)
             {
                 if (m.Msg == WM_HOTKEY)

@@ -8,7 +8,7 @@ using System.Drawing;
 
 namespace Zephyros
 {
-    class Window
+    public class Window
     {
         private delegate bool EnumDelegate(IntPtr hWnd, int lParam);
         [DllImport("user32.dll", ExactSpelling = false, CharSet = CharSet.Auto, SetLastError = true)]
