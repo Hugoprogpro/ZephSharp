@@ -33,4 +33,4 @@
   (try
     (load-file file)
     (catch Exception e
-      (System.Windows.Forms.MessageBox/Show (format "Couldn't load \"%s\". Make sure it exists maybe?" file)))))
+      (System.Windows.Forms.MessageBox/Show (format "Error loading \"%s\":\n\n%s" file e)))))
