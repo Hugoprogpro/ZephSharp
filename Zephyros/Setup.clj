@@ -29,7 +29,8 @@
   (.Move win (:x r) (:y r) (:w r) (:h r)))
 
 (defn reload-config-file [file]
+  (prn file)
   (try
     (load-file file)
     (catch Exception e
-      (System.Windows.Forms.MessageBox/Show (format "Couldn't load %s. Make sure it exists maybe?" file)))))
+      (System.Windows.Forms.MessageBox/Show (format "Couldn't load \"%s\". Make sure it exists maybe?" file)))))
