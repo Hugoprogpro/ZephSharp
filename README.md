@@ -41,6 +41,8 @@ Put this in ~\AppData\Local\Zephyros\config.clj
             (move-window (get-screen-rect)))))
 ```
 
+Here's [the rest the API](https://github.com/sdegutis/ZephSharp/blob/master/Zephyros/Setup.clj). Also you can use `:shift` as a modifier too.
+
 #### Change log
 
 - 0.1
