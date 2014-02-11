@@ -10,44 +10,61 @@ namespace Zephyros
 {
     public class Window
     {
-        private delegate bool EnumDelegate(IntPtr hWnd, int lParam);
-        [DllImport("user32.dll", ExactSpelling = false, CharSet = CharSet.Auto, SetLastError = true)]
-        private static extern bool EnumWindows(EnumDelegate lpEnumCallbackFunction, IntPtr lParam);
-
-        [DllImport("user32.dll")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool IsWindowVisible(IntPtr hWnd);
-
-        [DllImport("user32.dll", ExactSpelling = false, CharSet = CharSet.Auto, SetLastError = true)]
-        private static extern int GetWindowText(IntPtr hWnd, StringBuilder lpWindowText, int nMaxCount);
-
-        [DllImport("user32.dll")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool GetWindowRect(IntPtr hWnd, out RawRect lpRect);
-
-
-        [DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall, ExactSpelling = true, SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool MoveWindow(IntPtr hwnd, int X, int Y, int nWidth, int nHeight, bool bRepaint);
-
-
-        [StructLayout(LayoutKind.Sequential)]
-        public struct RawRect
+        private class WinAPI
         {
-            public int Left;
-            public int Top;
-            public int Right;
-            public int Bottom;
+            public delegate bool EnumDelegate(IntPtr hWnd, int lParam);
+            [DllImport("user32.dll", ExactSpelling = false, CharSet = CharSet.Auto, SetLastError = true)]
+            public static extern bool EnumWindows(EnumDelegate lpEnumCallbackFunction, IntPtr lParam);
+
+            [DllImport("user32.dll")]
+            [return: MarshalAs(UnmanagedType.Bool)]
+            public static extern bool IsWindowVisible(IntPtr hWnd);
+
+            [DllImport("user32.dll", ExactSpelling = false, CharSet = CharSet.Auto, SetLastError = true)]
+            public static extern int GetWindowText(IntPtr hWnd, StringBuilder lpWindowText, int nMaxCount);
+
+            [DllImport("user32.dll")]
+            [return: MarshalAs(UnmanagedType.Bool)]
+            public static extern bool GetWindowRect(IntPtr hWnd, out RawRect lpRect);
+
+
+            [DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall, ExactSpelling = true, SetLastError = true)]
+            [return: MarshalAs(UnmanagedType.Bool)]
+            public static extern bool MoveWindow(IntPtr hwnd, int X, int Y, int nWidth, int nHeight, bool bRepaint);
+
+            [DllImport("user32.dll", SetLastError = true)]
+            [return: MarshalAs(UnmanagedType.Bool)]
+            public static extern bool ShowWindow(IntPtr hwnd, int cmd);
+
+
+            [StructLayout(LayoutKind.Sequential)]
+            public struct RawRect
+            {
+                public int Left;
+                public int Top;
+                public int Right;
+                public int Bottom;
+            }
+
+            [DllImport("user32.dll")]
+            public static extern IntPtr GetForegroundWindow();
         }
 
         private IntPtr ptr;
 
+        public static Window GetActiveWindow()
+        {
+            Window w = new Window();
+            w.ptr = WinAPI.GetForegroundWindow();
+            return w;
+        }
+
         public static List<Window> GetWindows()
         {
             var windows = new List<Window>();
-            EnumDelegate filter = delegate(IntPtr hWnd, int lParam)
+            WinAPI.EnumDelegate filter = delegate(IntPtr hWnd, int lParam)
             {
-                if (IsWindowVisible(hWnd))
+                if (WinAPI.IsWindowVisible(hWnd))
                 {
                     var w = new Window();
                     w.ptr = hWnd;
@@ -56,19 +73,19 @@ namespace Zephyros
                 return true;
             };
 
-            EnumWindows(filter, IntPtr.Zero);
+            WinAPI.EnumWindows(filter, IntPtr.Zero);
             return windows;
         }
 
         public bool IsVisible()
         {
-            return IsWindowVisible(ptr) && this.GetTitle() != "";
+            return WinAPI.IsWindowVisible(ptr) && this.GetTitle() != "";
         }
 
         public string GetTitle()
         {
             StringBuilder strbTitle = new StringBuilder(255);
-            int nLength = GetWindowText(ptr, strbTitle, strbTitle.Capacity + 1);
+            int nLength = WinAPI.GetWindowText(ptr, strbTitle, strbTitle.Capacity + 1);
             string strTitle = strbTitle.ToString();
 
             if (!string.IsNullOrEmpty(strTitle))
@@ -79,9 +96,9 @@ namespace Zephyros
 
         public Rectangle GetRect()
         {
-            RawRect rct;
+            WinAPI.RawRect rct;
 
-            if (!GetWindowRect(ptr, out rct))
+            if (!WinAPI.GetWindowRect(ptr, out rct))
                 return new Rectangle();
 
             return new Rectangle { X = rct.Left, Y = rct.Top, Width = rct.Right - rct.Left + 1, Height = rct.Bottom - rct.Top + 1 };
@@ -89,7 +106,10 @@ namespace Zephyros
 
         public bool Move(int x, int y, int width, int height)
         {
-            return MoveWindow(ptr, x, y, width, height, true);
+            WinAPI.ShowWindow(ptr, SW_RESTORE);
+            return WinAPI.MoveWindow(ptr, x, y, width, height, true);
         }
+
+        private const int SW_RESTORE = 9;
     }
 }

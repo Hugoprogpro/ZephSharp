@@ -10,6 +10,9 @@
       (.WorkingArea)
       (from-rect)))
 
+(defn get-active-window []
+  (Zephyros.Window/GetActiveWindow))
+
 (defn get-all-windows []
   (Zephyros.Window/GetWindows))
 
