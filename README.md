@@ -11,7 +11,7 @@ The Windows window manager for hackers
 
 #### Install
 
-Haven't figured that part out yet.
+- [Zephyros-0.1.zip](https://github.com/sdegutis/ZephSharp/blob/master/Builds/Zephyros-0.1.zip?raw=true).
 
 #### Basics
 
