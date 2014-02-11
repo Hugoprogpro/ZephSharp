@@ -44,15 +44,15 @@ namespace Zephyros
         private void reloadConfigs()
         {
             HotKey.ResetAll();
-            clojure.lang.Var v = clojure.lang.RT.var("clojure.core", "load-file");
-            v.invoke(@"C:\Users\sdegutis\Desktop\Test.clj");
+            string folder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            string file = Path.Combine(folder, "Zephyros", "config.clj");
+            clojure.lang.RT.var("clojure.core", "reload-config-file").invoke(file);
         }
 
         private void setupClojureStuff()
         {
             string contents = new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream("Zephyros.Setup.clj")).ReadToEnd();
-            clojure.lang.Var v = clojure.lang.RT.var("clojure.core", "load-string");
-            v.invoke(contents);
+            clojure.lang.RT.var("clojure.core", "load-string").invoke(contents);
         }
     }
 }
