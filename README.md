@@ -7,7 +7,7 @@
 The Windows window manager for hackers
 
 * Current version: 0.1
-* Requires: Windows (not sure which versino) with .NET 4.5 (I think?)
+* Requires: Windows (not sure which version) with .NET 4.5 (I think?)
 
 #### Install
 
