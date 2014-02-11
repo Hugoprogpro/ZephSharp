@@ -41,7 +41,14 @@ Put this in ~\AppData\Local\Zephyros\config.clj
             (move-window (get-screen-rect)))))
 ```
 
+Then start ZephSharp. It will run your script. Click the icon in the systray to reload your script.
+
 Here's [the rest the API](https://github.com/sdegutis/ZephSharp/blob/master/Zephyros/Setup.clj). Also you can use `:shift` as a modifier too.
+
+####
+
+- Get a better systray icon (just borrowed some random favicon.ico for now).
+- Better error messages when your script doesn't load so well.
 
 #### Change log
 
