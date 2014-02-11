@@ -73,6 +73,15 @@ namespace Zephyros
             CallbackWindow.Instance.HotKeyTable.Remove(_id);
         }
 
+        static public void ResetAll()
+        {
+            foreach (HotKey hotkey in CallbackWindow.Instance.HotKeyTable.Values)
+            {
+                UnregisterHotKey(CallbackWindow.Instance.Handle, hotkey._id);
+            }
+            CallbackWindow.Instance.HotKeyTable.Clear();
+        }
+
         private class CallbackWindow : Form
         {
             static public readonly CallbackWindow Instance = new CallbackWindow();

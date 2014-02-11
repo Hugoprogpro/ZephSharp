@@ -62,10 +62,10 @@ namespace Zephyros
 
         public bool IsVisible()
         {
-            return IsWindowVisible(ptr) && this.Title() != "";
+            return IsWindowVisible(ptr) && this.GetTitle() != "";
         }
 
-        public string Title()
+        public string GetTitle()
         {
             StringBuilder strbTitle = new StringBuilder(255);
             int nLength = GetWindowText(ptr, strbTitle, strbTitle.Capacity + 1);
@@ -87,9 +87,9 @@ namespace Zephyros
             return new Rectangle { X = rct.Left, Y = rct.Top, Width = rct.Right - rct.Left + 1, Height = rct.Bottom - rct.Top + 1 };
         }
 
-        public bool Move(Rectangle r)
+        public bool Move(int x, int y, int width, int height)
         {
-            return MoveWindow(ptr, r.X, r.Y, r.Width, r.Height, true);
+            return MoveWindow(ptr, x, y, width, height, true);
         }
     }
 }

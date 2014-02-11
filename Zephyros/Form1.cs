@@ -4,21 +4,10 @@ using System.ComponentModel;
 using System.Data;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Threading;
-
-//var wins = Zephyros.Window.GetWindows();
-//foreach (var win in wins)   
-//{
-//    if (win.IsVisible())
-//    {
-//        Rectangle r = win.GetRect();
-//        r.X += 10;
-//        win.Move(r);
-//        Console.WriteLine("HEY = " + win.Title());
-//    }
-//}
+using System.IO;
+using System.Reflection;
 
 namespace Zephyros
 {
@@ -27,16 +16,14 @@ namespace Zephyros
         public Form1()
         {
             InitializeComponent();
-            Console.WriteLine("bla");
+            setupClojureStuff();
             reloadConfigs();
         }
 
         private void notifyIcon1_Click(object sender, EventArgs e)
         {
-            if (((MouseEventArgs)e).Button != MouseButtons.Left)
-                return;
-
-            reloadConfigs();
+            if (((MouseEventArgs)e).Button == MouseButtons.Left)
+                reloadConfigs();
         }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
@@ -49,15 +36,23 @@ namespace Zephyros
             reloadConfigs();
         }
 
+        protected override void SetVisibleCore(bool value)
+        {
+            base.SetVisibleCore(false);
+        }
+
         private void reloadConfigs()
         {
+            HotKey.ResetAll();
             clojure.lang.Var v = clojure.lang.RT.var("clojure.core", "load-file");
             v.invoke(@"C:\Users\sdegutis\Desktop\Test.clj");
         }
 
-        protected override void SetVisibleCore(bool value)
+        private void setupClojureStuff()
         {
-            base.SetVisibleCore(false);
+            string contents = new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream("Zephyros.Setup.clj")).ReadToEnd();
+            clojure.lang.Var v = clojure.lang.RT.var("clojure.core", "load-string");
+            v.invoke(contents);
         }
     }
 }
