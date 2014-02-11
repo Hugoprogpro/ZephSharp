@@ -30,7 +30,7 @@ You typically write a script that binds global hot keys to do stuff, like moving
 
 #### How you do it
 
-You write your scripts in Clojure.
+Right now you can only write your scripts in Clojure. There are plans to use other languages in the future, but I've yet to figure out which ones people want integrated in.
 
 Put this in ~\AppData\Local\Zephyros\config.clj
 
